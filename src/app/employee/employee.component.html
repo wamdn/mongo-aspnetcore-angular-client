@@ -1,0 +1,177 @@
+<button type="button"
+class="btn btn-primary m-2 mt-3 float-end"
+data-bs-toggle="modal" data-bs-target="#departmentModal"
+(click)="unsetEmpState() && action = Action.Create"><i class="bi bi-plus-square-dotted"></i>&nbsp;Add employee</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>
+
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="empIdFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        Employee ID
+
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('id')">
+          <i class="bi bi-caret-up-fill"></i>
+        </button>
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('id', true)">
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+
+      </th>
+      <th>
+
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="empNameFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        <div>
+          Employee Name
+
+          <span>
+            <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('name')">
+              <i class="bi bi-caret-up-fill"></i>
+            </button>
+            <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('name', true)">
+              <i class="bi bi-caret-down-fill"></i>
+            </button>
+          </span>
+        </div>
+
+      </th>
+      <th>
+
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="empDeptFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        <div>
+          Department
+          <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('departmentName')">
+            <i class="bi bi-caret-up-fill"></i>
+          </button>
+          <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('departmentName', true)">
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+        </div>
+      </th>
+      <th>
+
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="empDOJFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        <div>
+          Date of joining
+
+          <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('dateOfJoining')">
+            <i class="bi bi-caret-up-fill"></i>
+          </button>
+          <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('dateOfJoining', true)">
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
+        </div>
+
+      </th>
+      <th>
+        <div>
+          <button class="btn btn-primary mb-2 reset-filter-btn" (click)="resetFilter()">Reset</button>
+        </div>
+        Options
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let emp of employees">
+      <td>{{ emp.id }}</td>
+      <td>{{ emp.name }}</td>
+      <td>{{ emp.departmentName }}</td>
+      <td>{{ toLocaleDateString(emp.dateOfJoining) }}</td>
+      <td>
+        <button
+        (click)="setEmpState(emp) && action = Action.Update"
+        data-bs-toggle="modal"
+        data-bs-target="#departmentModal"
+        class="btn"><i class="bi bi-pencil-square"></i></button>
+
+        <button (click)="dispatcher(Action.Delete, emp)" class="btn">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div
+  class="modal fade"
+  id="departmentModal"
+  tabindex="-1"
+  aria-labelledby="departmentModalLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0">
+      <div class="modal-header">
+        <h5 class="modal-title" id="departmentModalLabel">{{ ationToString(action) }}</h5>
+        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body row mb-3">
+        <div class="col-lg-7">
+          <div class="input-group mb-3">
+            <label for="name" class="input-group-text">Employee name</label>
+            <input id="name" type="text" class="form-control" [(ngModel)]="empName">
+          </div>
+
+          <div class="input-group mb-3">
+            <label for="department" class="input-group-text">Department</label>
+            <select class="form-select" id="department" [(ngModel)]="departmentId">
+              <option selected disabled>Select a department</option>
+              <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+            </select>
+          </div>
+
+          <div class="input-group mb-3">
+            <label for="dateOfJoining" class="input-group-text">Date of joining</label>
+            <input id="dateOfJoining" type="date" class="form-control" [(ngModel)]="dateOfJoining" #dateInput>
+          </div>
+
+          <div class="input-group mb-3">
+            <input id="photo" type="file" class="form-control" (change)="uploadFile($event)" #fileInput>
+          </div>
+        </div>
+
+        <div class="col-lg-5 d-flex flex-column justify-content-center align-items-center">
+          <img width="250px" height="250px" [src]="getImageSrc(imageName)" alt="uploaded photo of the employee">
+        </div>
+      </div>
+
+
+      <div class="modal-footer border-0">
+        <button
+        type="button"
+        class="btn btn-primary"
+        (click)="dispatcher(action, employee)"
+        data-bs-dismiss="modal">
+          {{ ationToString(action) | titlecase }} employee
+        </button>
+
+        <button
+        type="button"
+        class="btn btn-secondary"
+        data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

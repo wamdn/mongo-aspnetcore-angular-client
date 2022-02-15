@@ -1,0 +1,105 @@
+<button type="button"
+class="btn btn-primary m-2 mt-3 float-end"
+data-bs-toggle="modal" data-bs-target="#departmentModal"
+(click)="unsetDeptState() && action = Action.Create"><i class="bi bi-plus-square-dotted"></i>&nbsp;Add department</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="deptIdFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        Department ID
+
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('id')">
+          <i class="bi bi-caret-up-fill"></i>
+        </button>
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('id', true)">
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+      </th>
+      <th>
+        <input type="text"
+        class="form-control mb-2"
+        [(ngModel)]="deptNameFilter"
+        (keyup)="filter()"
+        placeholder="filter">
+
+        Department name
+
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('name')">
+          <i class="bi bi-caret-up-fill"></i>
+        </button>
+        <button type="button" class="btn btn-light p-0 bg-transparent" (click)="sort('name', true)">
+          <i class="bi bi-caret-down-fill"></i>
+        </button>
+      </th>
+
+      <th>
+        <div>
+          <button class="btn btn-primary mb-2 reset-filter-btn" (click)="resetFilter()">Reset</button>
+        </div>
+        Options
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let dept of departments">
+      <td>{{ dept.id }}</td>
+      <td>{{ dept.name }}</td>
+      <td>
+        <button
+        (click)="setDeptState(dept) && action = Action.Update"
+        data-bs-toggle="modal"
+        data-bs-target="#departmentModal"
+        class="btn"><i class="bi bi-pencil-square"></i></button>
+
+        <button (click)="dispatcher(Action.Delete, dept)" class="btn">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div
+  class="modal fade"
+  id="departmentModal"
+  tabindex="-1"
+  aria-labelledby="departmentModalLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0">
+      <div class="modal-header">
+        <h5 class="modal-title" id="departmentModalLabel">{{ ationToString(action) }}</h5>
+        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="input-group mb-3">
+          <span class="input-group-text">Department name</span>
+          <input type="text" class="form-control" [(ngModel)]="deptName">
+        </div>
+
+      </div>
+      <div class="modal-footer border-0">
+        <button
+        type="button"
+        class="btn btn-primary"
+        (click)="dispatcher(action, { id: deptId, name: deptName })">
+          {{ ationToString(action) | titlecase }} department
+        </button>
+
+        <button
+        type="button"
+        class="btn btn-secondary"
+        data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
