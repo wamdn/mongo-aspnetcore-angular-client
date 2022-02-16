@@ -91,6 +91,7 @@ data-bs-toggle="modal" data-bs-target="#departmentModal"
         <button
         type="button"
         class="btn btn-primary"
+        data-bs-dismiss="modal"
         (click)="dispatcher(action, { id: deptId, name: deptName })">
           {{ ationToString(action) | titlecase }} department
         </button>

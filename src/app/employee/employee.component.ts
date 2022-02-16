@@ -1,7 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { ToastrService } from 'ngx-toastr';
 
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { Department } from '../shared/department.model';
 import { Action } from '../shared/action.model';
 import { Employee } from './employee.model';
@@ -52,7 +54,7 @@ export class EmployeeComponent implements OnInit {
   public empDOJFilter = "";
   public employeesWithoutFilter: Employee[] = []
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.refreshList();
@@ -80,8 +82,11 @@ export class EmployeeComponent implements OnInit {
       dept.id && dept.name && deptTable.set(dept.id, dept.name));
 
     empList.forEach(emp => {
-      if (emp.departmentId && deptTable.has(emp.departmentId))
+      if (emp.departmentId && deptTable.has(emp.departmentId)) {
         emp.departmentName = deptTable.get(emp.departmentId)
+      } else {
+        emp.departmentName = "<none>"
+      }
     });
 
     return empList
@@ -157,22 +162,35 @@ export class EmployeeComponent implements OnInit {
     setTimeout(() => this.unsetEmpState(), 1000)
   }
 
+  public showSuccess(message = ""): void {
+    this.toastr.success(message, "Success");
+  }
+
   private create(emp: Employee): void {
     this.http
       .post(this.EMP_URI, emp)
-      .subscribe(() => this.refreshList());
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Employee was added")
+      });
   }
 
   private update(emp: Employee): void {
     this.http
       .put(this.EMP_URI, emp)
-      .subscribe(() => this.refreshList());
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Employee was updated")
+      });
   }
 
   private delete(emp: Employee): void {
     this.http
       .delete(`${this.EMP_URI}/${emp.id}`)
-      .subscribe(() => this.refreshList())
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Employee was removed")
+      })
   }
 
   public filter() {

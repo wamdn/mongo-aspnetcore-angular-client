@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { ToastrService } from 'ngx-toastr';
 
 import { environment } from 'src/environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { Department } from '../shared/department.model';
 import { Action } from '../shared/action.model';
 
@@ -28,7 +30,7 @@ export class DepartmentComponent implements OnInit {
   public deptNameFilter = "";
   public departmentsWithoutFilter: Department[] = []
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     this.refreshList();
@@ -81,25 +83,38 @@ export class DepartmentComponent implements OnInit {
         this.delete({ id: dept.id });
         break;
     }
-    this.unsetDeptState()
+    setTimeout(() => this.unsetDeptState(), 1000)
+  }
+
+  public showSuccess(message = ""): void {
+    this.toastr.success(message, "Success");
   }
 
   private create(dept: Department): void {
     this.http
       .post(this.DEPT_URI, dept)
-      .subscribe(() => this.refreshList());
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Department was added")
+      });
   }
 
   private update(dept: Department): void {
     this.http
       .put(this.DEPT_URI, dept)
-      .subscribe(() => this.refreshList());
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Department was updated")
+      });
   }
 
   private delete(dept: Department): void {
     this.http
       .delete(`${this.DEPT_URI}/${dept.id}`)
-      .subscribe(() => this.refreshList())
+      .subscribe(() => {
+        this.refreshList()
+        this.showSuccess("Department was removed")
+      })
   }
 
   public filter() {
